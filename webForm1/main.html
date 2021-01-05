@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <style>
+  
+    .nav-link{
+    cursor: pointer;
+       
+    }
+    #loading {
+    position: fixed;
+    top:0;
+    left:0;
+    height: 100vh;
+    width:100vw;
+    background-color: rgba(0,0,0,0.3)
+    
+    }
+    
+    </style>
+  </head>
+  <body>
+
+<div class="container">
+<nav id="navigation">
+
+<ul class="nav nav-tabs main-nav">
+ 
+  <li class="nav-item">
+   <b> <div class="nav-link active " id ="search-link">Búsqueda de Contratos</div></b>
+  </li>
+  <li class="nav-item">
+    <div class="nav-link" id ="edit-customer-link" hidden>Editar vehículo</div>
+  </li>
+   <li class="nav-item">
+    <div class="nav-link" id ="edit-status-link" hidden>Cambiar estado de Contrato</div>
+  </li>
+ 
+</ul>
+</nav>
+
+<div id ="app"></div>
+</div>
+<div id="loading" class="d-flex justify-content-center align-items-center invisible"> 
+<img src = "logo load" alt="numres" style="width:10vw;height:auto;">
+<div class="spinner-grow text-primary" style="width:3rem; height: 3rem;" role="status">
+
+  <span class="sr-only">Cargando...</span>
+</div>
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+  <script> 
+ 
+  var data; 
+  function loadView(options){
+  var id = typeof options.id === "undefined"?"app": options.id;
+  var cb = typeof options.callback === "undefined"? function(){}: options.callback;
+  loadingStart();
+   google.script.run.withSuccessHandler(function(html){
+  document.getElementById(id).innerHTML= html;
+  loadingEnd();
+  typeof options.params === "undefined" ? cb() : cb(options.params);
+  
+  })[options.func]();
+    
+  }
+  
+  function setDataForSearch(){
+  loadingStart();
+  
+  
+  google.script.run.withSuccessHandler(function(dataReturned){
+  data = dataReturned.slice();
+  loadingEnd()
+  }).getDataForSearch();
+    
+  } 
+ 
+  function search(){
+  
+  var searchInput = document.getElementById("searchInput").value.toString().toLowerCase().trim();
+  var searchWords = searchInput.split(/\s+/);
+  var searchColumns =[0,1,2,3]
+  
+  
+  var resultsArray = searchInput ==="" ? [] : data.filter(function(r){
+  
+  return searchWords.every(function(word){
+  return searchColumns.some(function(colIndex){
+  return r[colIndex].toString().toLowerCase().indexOf(word) !== -1;
+  
+  });
+  });
+  });
+  
+  document.getElementById("contador").textContent = "Resultado: "+resultsArray.length+ " registro(s)";
+  
+  
+  var searchResultsBox = document.getElementById("searchResults");
+  var templateBox = document.getElementById("rowTemplate");
+  var template = templateBox.content;
+  
+  searchResultsBox.innerHTML ="";
+  
+  resultsArray.forEach(function(r){
+  
+  var tr = template.cloneNode(true);
+  var contractId = tr.querySelector(".col1");
+  var administrador = tr.querySelector(".col2");
+  var centro = tr.querySelector(".col3");
+  var numres = tr.querySelector(".col4");
+  
+  var editButton = tr.querySelector(".edit-button");
+  var changeButton = tr.querySelector(".change-button");
+  var deleteButton = tr.querySelector(".delete-button");
+   
+  contractId.textContent= r[0];
+  administrador.textContent= r[1];
+  centro.textContent= r[2];
+  numres.textContent= r[3];
+  
+  editButton.dataset.contractId =r[0]
+  changeButton.dataset.contractId =r[0]
+  deleteButton.dataset.contractId =r[0]
+  
+  searchResultsBox.appendChild(tr)
+  
+  });
+
+  }
+  
+  function deleteVehicle(e){
+  
+ var contractId = e.target.dataset.contractId;
+ loadingStart();
+ google.script.run.withSuccessHandler(function(){
+ // e.target.closest(".result-box").remove();
+ $('.result-box').remove()
+  
+ 
+ var ids = data.map(function(r){ return r[0].toString().toLowerCase()});
+ var index =ids.indexOf(contractId.toString().toLowerCase());
+ data.splice(index,1);
+ loadingEnd();
+ 
+  
+ }).deleteById(contractId)
+
+  }
+  function displayConfirmation(e){
+  if(e.target.dataset.buttonState === "delete"){
+  
+  e.target.previousElementSibling.classList.remove("d-none")
+  e.target.textContent = "Cancelar";
+  e.target.dataset.buttonState ="cancel"
+  
+  } else{
+  
+  e.target.previousElementSibling.classList.add("d-none")
+  e.target.textContent = "Borrar";
+  e.target.dataset.buttonState ="delete"
+  
+  
+  }
+  }
+
+  function afterEditViewLoads(params){
+  
+  //var statuscheckvalue = status.checked ?"ACTIVO":"INACTIVO";
+  //var issueInputs3 = document.getElementsByClassName("issue-input3");
+  //var issueInputsValue3 = issueInputs3 === 0? "NO REGISTRA": Array.prototype.map.call(issueInputs3, function(n){return n.value}).join("\n");
+  
+  loadingStart();
+  
+  document.getElementById("contractId").value = params.contractId
+  
+  google.script.run.withSuccessHandler(function(contractInfo){
+
+  //document.getElementById("cuenta").value = contractInfo.cuenta;
+  document.getElementById("ambito").value = contractInfo.ambito;
+  document.getElementById("materia").value = contractInfo.materia;
+  document.getElementById("descripcion").value = contractInfo.descripcion;
+  document.getElementById("tipoproceso").value = contractInfo.tipoproceso;
+  document.getElementById("estado").value = contractInfo.estado;
+  document.getElementById("zona").value = contractInfo.zona;
+  document.getElementById("region").value = contractInfo.region;
+  document.getElementById("centro").value = contractInfo.centro;
+  document.getElementById("administrador").value = contractInfo.administrador;
+  document.getElementById("fechainicio").value = contractInfo.fechainicio;
+  document.getElementById("fechatermino").value = contractInfo.fechatermino;
+  document.getElementById("numres").value = contractInfo.numres;
+  document.getElementById("fechares").value = contractInfo.fechares;
+   document.getElementById("status").value = contractInfo.status
+  document.getElementById("numexp").value = contractInfo.numexp;
+  document.getElementById("empresa").value = contractInfo.empresa;
+  document.getElementById("rut").value = contractInfo.rut;
+  document.getElementById("moneda").value = contractInfo.moneda;
+  document.getElementById("montouf").value = contractInfo.montouf;
+  document.getElementById("montopeso").value = contractInfo.montopeso;
+ 
+  //issueInputsValue3 = contractInfo.issueInputsValue3;
+    
+    loadingEnd()
+  
+  }).getVehiculoById(params.contractId) 
+ 
+  }
+  
+  function loadingStart(){
+  
+  document.getElementById("loading").classList.remove("invisible");
+  
+  }
+  function loadingEnd(){
+  
+   document.getElementById("loading").classList.add("invisible");
+ }
+
+  function editCarInfo(){
+  
+   
+  var issueInputs3 = document.getElementsByClassName("issue-input3");
+  var issueInputsValue3 = issueInputs3 === 0? "NO REGISTRA": Array.prototype.map.call(issueInputs3, function(n){return n.value}).join("\n");
+  loadingStart()
+   var contractInfo = {};
+  
+ contractInfo.id = document.getElementById("contractId").value 
+ contractInfo.cuenta = document.getElementById("cuenta").value  ;
+ contractInfo.ambito= document.getElementById("ambito").value  ;
+ contractInfo.materia= document.getElementById("materia").value  ;
+ contractInfo.descripcion = document.getElementById("descripcion").value  ;
+ contractInfo.tipoproceso = document.getElementById("tipoproceso").value  ;
+ contractInfo.estado = document.getElementById("estado").value  ;
+ contractInfo.zona =document.getElementById("zona").value  ;
+ contractInfo.centro= document.getElementById("centro").value  ;
+ contractInfo.region =document.getElementById("region").value  ;
+ contractInfo.administrador= document.getElementById("administrador").value  ;
+ contractInfo.fechainicio =document.getElementById("fechainicio").value  ;
+ contractInfo.fechatermino =document.getElementById("fechatermino").value  ;
+ contractInfo.numres= document.getElementById("numres").value  ;
+ contractInfo.fechares= document.getElementById("fechares").value  ;
+ contractInfo.status =document.getElementById("status").value
+ contractInfo.numexp =document.getElementById("numexp").value  ;
+ contractInfo.empresa =document.getElementById("empresa").value  ;
+ contractInfo.rut =document.getElementById("rut").value  ;
+ contractInfo.moneda= document.getElementById("moneda").value  ;
+ contractInfo.montouf= document.getElementById("montouf").value  ;
+ contractInfo.montopeso= document.getElementById("montopeso").value  ;
+   
+ contractInfo.issueInputsValue3 = issueInputsValue3   
+ 
+  
+var id = document.getElementById("contractId").value;
+  
+  google.script.run.withSuccessHandler(function(res){
+  
+
+    document.getElementById("save-success").classList.remove("invisible");
+    loadingEnd();
+    setTimeout(function(){
+    document.getElementById("save-success").classList.add("invisible")
+    
+    
+    },4000);
+  
+  }).editCarById(id,contractInfo) 
+   
+  // google.script.run.mailingcontractedit(id)
+  
+  }
+  
+ 
+  function loadSearchView(){
+  loadView({func: "loadSearchView", callback: setDataForSearch});
+  }
+ 
+  function loadEditCustomerView(e){
+  
+   loadView({func: "loadEditCustomerView", callback: afterEditViewLoads, params: {contractId: e.target.dataset.contractId}});
+   
+  }
+
+  function loadEditStatusView(e){
+  
+   loadView({func: "loadEditStatusView", callback: afterEditViewLoads, params: {contractId: e.target.dataset.contractId}});
+  }
+ 
+  function activeTabChange(e){
+   var navLinks = document.querySelectorAll(".main-nav .nav-link");
+   navLinks.forEach(function(linkEl){
+   linkEl.classList.remove("active");
+   });
+  e.target.classList.add("active")
+  
+  
+  }
+ 
+    document.getElementById("search-link").addEventListener("click",loadSearchView);    
+    document.getElementById("edit-customer-link").addEventListener("click",loadEditCustomerView);
+    document.getElementById("edit-status-link").addEventListener("click",loadEditStatusView);
+ 
+  function inputEventHandler(e){
+ if( e.target.matches("#searchInput")){
+ search();
+ }
+ }
+ 
+  function clickEventHandler(e){
+ if( e.target.matches(".edit-button")){
+ 
+ loadEditCustomerView(e);
+ setTimeout(function(){document.getElementById("issues").addEventListener("click",afterInputButtonClicked)}, 5000)
+ 
+ }
+ if( e.target.matches("#guardar")){
+ 
+ editCarInfo();
+ }
+ 
+  if( e.target.matches(".delete-button")){
+  deleteVehicle(e);
+
+ }
+ 
+  if( e.target.matches(".before-delete-button")){
+  displayConfirmation(e);
+
+ }
+  if( e.target.matches("#cancel-changes")){
+ loadSearchView();
+ }
+ if( e.target.matches(".change-button")){
+ 
+ loadEditStatusView(e);
+ 
+ setTimeout(function(){document.getElementById("issues").addEventListener("click",afterInputButtonClicked)}, 5000)
+ 
+ }
+ if( e.target.matches("#guardarcambio")){
+
+ buttonClickAction();
+
+ }
+
+ }
+  function navClickEventHandler(e){
+  if( e.target.matches(".nav-link")){
+  activeTabChange(e)
+
+  }
+  }
+  
+  function successnotification3(){
+  document.getElementById("save-success1").classList.remove("invisible");
+  setTimeout(function(){
+    document.getElementById("save-success1").classList.add("invisible")
+  
+    },50000);
+
+  }
+  function successnotification2(){
+  document.getElementById("save-success2").classList.remove("invisible");
+  setTimeout(function(){
+    document.getElementById("save-success2").classList.add("invisible")
+    
+    
+    },50000);
+
+  }
+  
+  function checkRut(rut) {
+    // Despejar Puntos
+    var valor = rut.value.replace('.','');
+    // Despejar Guión
+    valor = valor.replace('-','');
+    
+    // Aislar Cuerpo y Dígito Verificador
+    cuerpo = valor.slice(0,-1);
+    dv = valor.slice(-1).toUpperCase();
+    
+    // Formatear RUN
+    rut.value = cuerpo + '-'+ dv
+    
+    // Si no cumple con el mínimo ej. (n.nnn.nnn)
+    if(cuerpo.length < 7) { rut.setCustomValidity("RUT Incompleto"); return false;}
+    
+    // Calcular Dígito Verificador
+    suma = 0;
+    multiplo = 2;
+    
+    // Para cada dígito del Cuerpo
+    for(i=1;i<=cuerpo.length;i++) {
+    
+        // Obtener su Producto con el Múltiplo Correspondiente
+        index = multiplo * valor.charAt(cuerpo.length - i);
+        
+        // Sumar al Contador General
+        suma = suma + index;
+        
+        // Consolidar Múltiplo dentro del rango [2,7]
+        if(multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
+  
+    }
+    
+    // Calcular Dígito Verificador en base al Módulo 11
+    dvEsperado = 11 - (suma % 11);
+    
+    // Casos Especiales (0 y K)
+    dv = (dv == 'K')?10:dv;
+    dv = (dv == 0)?11:dv;
+    
+    // Validar DV
+    if(dvEsperado != dv) { rut.setCustomValidity("RUT Inválido"); return false; }
+    
+    // Validación
+    rut.setCustomValidity('');
+}
+function getFiles() {
+            
+      const f = document.getElementById('files');
+      var uploadCompletedCount = 0;
+      
+      [...f.files].forEach((file, i) => {
+        const fr = new FileReader();
+        fr.onload = (e) => {
+          const data = e.target.result.split(",");
+          const obj = {fileName: f.files[i].name, mimeType: data[0].match(/:(\w.+);/)[1], data: data[1]};
+          google.script.run.withSuccessHandler((id) => {
+            
+            if (uploadCompletedCount >= [...f.files].length){
+              google.script.host.close();
+            }
+            else{
+              
+            }
+          }).saveFile(obj);
+        }
+        fr.readAsDataURL(file);
+      });
+    }
+    
+    function getFiles2() {
+            
+      const f = document.getElementById('files2');
+      var uploadCompletedCount = 0;
+      
+      [...f.files].forEach((file, i) => {
+        const fr = new FileReader();
+        fr.onload = (e) => {
+          const data = e.target.result.split(",");
+          const obj = {fileName: f.files[i].name, mimeType: data[0].match(/:(\w.+);/)[1], data: data[1]};
+          google.script.run.withSuccessHandler((id) => {
+            
+            if (uploadCompletedCount >= [...f.files].length){
+              google.script.host.close();
+            }
+            else{
+              
+            }
+          }).saveFile2(obj);
+        }
+        fr.readAsDataURL(file);
+      });
+    }
+
+function addInput(){
+var issues = document.getElementById("issues");
+var template = document.getElementById("inputTemplate");
+var copy= template.content.cloneNode(true);
+
+issues.appendChild(copy);
+
+}
+
+function removeallinputs(){
+document.getElementById("issues").innerHTML =""
+
+}
+function afterInputButtonClicked(e){
+var inputfieldben = document.getElementById("beneficiario")
+
+if(e.target.matches(".add-input *,.add-input")&& inputfieldben.value != "TODOS LOS BENEFICIARIOS"){
+
+addInput();
+
+
+} else if(e.target.matches(".remove-input *,.remove-input")){
+if(document.getElementsByClassName("input-line").length>1){
+
+e.target.closest(".input-line").remove();
+
+}
+
+}
+
+}
+
+function benefload(){
+var select= document.getElementById("addpartnertoggle")
+if(select.value == 'Agregar'){
+addInput();
+}else {
+removeallinputs()
+}
+
+}
+
+ function buttonClickAction(){
+  
+  var fechainicial1=document.getElementById("fechainicio").value;
+  var fechafinal1= document.getElementById("fechatermino").value;
+  var fechainicial = Number(fechainicial1)
+  var fechafinal = Number(fechafinal1)
+  document.getElementById("descripcion").required = true
+   
+   if( fechainicial1>fechafinal1 ){
+   
+   $('#errornotificationfecha').toast('show')
+   $('#modal2').modal('hide')
+  
+  } else {
+  
+  afterButtonClicked()
+   
+  }
+  }
+
+  function afterButtonClicked(){
+  
+  if(validate()){
+  
+var cuenta = document.getElementById("cuenta");
+var ambito= document.getElementById("ambito");
+var materia= document.getElementById("materia");
+var descripcion = document.getElementById("descripcion");
+var tipoproceso = document.getElementById("tipoproceso");
+var estado = document.getElementById("estado");
+var zona= document.getElementById("zona");
+var region= document.getElementById("region");
+var centro = document.getElementById("centro");
+var administrador = document.getElementById("administrador");
+var fechainicio= document.getElementById("fechainicio");
+var fechatermino = document.getElementById("fechatermino");
+var numres= document.getElementById("numres");
+var fechares= document.getElementById("fechares");
+var status= document.getElementById("status")
+var numexp= document.getElementById("numexp");
+var empresa= document.getElementById("empresa");
+var rutempresa = document.getElementById("rut");
+var moneda= document.getElementById("moneda");
+var montouf = document.getElementById("montouf");
+var montopeso = document.getElementById("montopeso");
+
+var issueInputs3 = document.getElementsByClassName("issue-input3");
+var issueInputsValue3 = issueInputs3 === 0? "NO REGISTRA": Array.prototype.map.call(issueInputs3, function(n){return n.value}).join("\n");
+var contractId = document.getElementById("contractId");
+
+  var rowData = { cuenta: cuenta.value, 
+  ambito: ambito.value, materia: materia.value, 
+  descripcion: descripcion.value,
+  tipoproceso: tipoproceso.value, 
+  estado: estado.value, 
+  zona: zona.value, 
+  region: region.value,
+  centro: centro.value,
+  administrador: administrador.value, 
+  fechainicio: fechainicio.value, 
+  fechatermino: fechatermino.value, 
+  numres: numres.value, 
+  fechares: fechares.value, 
+  status: status.value,
+  numexp: numexp.value,
+  empresa: empresa.value, 
+  rutempresa: rutempresa.value, 
+  moneda: moneda.value, 
+  montouf: montouf.value,
+  montopeso: montopeso.value,
+  issueInputsValue3: issueInputsValue3,
+  contractId: contractId.value
+  
+ };
+ 
+  google.script.run.addNewRow(rowData);
+  $('#modal2').modal('hide')
+  $('#successnotification').toast('show');
+  getFiles()
+  getFiles2()
+  setTimeout(loadSearchView,8000);
+  } else{
+  $('#modal2').modal('hide')
+  $('#errornotification').toast('show')
+ 
+  }
+  }
+  
+ function validate(){
+  var fieldsToValidate = document.querySelectorAll("#sgcs input, #sgcs select");
+  Array.prototype.forEach.call(fieldsToValidate, function(el){
+  if(el.checkValidity()){
+  el.classList.remove("is-invalid");
+  
+  }else{
+  el.classList.add("is-invalid");
+  
+  }
+
+  });
+  
+  return Array.prototype.every.call(fieldsToValidate, function(el){
+  return el.checkValidity();
+  
+  });
+  
+ }
+ function afterSideBarLoads(){
+  loadingStart()
+    google.script.run.withSuccessHandler(afterDropDownArrayReturned).getDropdownArray();
+  
+  }
+  function addUniqueOptionsToDropdownList(el,arrayOfArrays,index){
+    var currentlyAdded = [];
+    el.innerHTML = '<option></option>';
+    arrayOfArrays.forEach(function(r){
+      if(currentlyAdded.indexOf(r[index]) === -1){
+        var option = document.createElement("option");
+        option.textContent = r[index];
+        el.appendChild(option);
+        currentlyAdded.push(r[index]);
+        }
+  
+  });
+  
+  }
+ 
+  function afterDropDownArrayReturned(arrayOfArrays){
+  arrayOfValues = arrayOfArrays.filter(function(r){return true;});
+  var ambito = document.getElementById("ambito");
+  addUniqueOptionsToDropdownList(ambito,arrayOfValues,0);
+  afterFirstDropDownChanged()
+  document.getElementById("loading").remove();
+ 
+  } 
+  function afterFirstDropDownChanged(){
+    var materia = document.getElementById("materia");
+    var ambito = document.getElementById("ambito").value;
+    var filteredArrayOfValues = arrayOfValues.filter(function(r){return r[0] === ambito});
+    addUniqueOptionsToDropdownList(materia,filteredArrayOfValues,1)
+   
+  }
+      
+  function afterLocalLoads(){
+  
+  google.script.run.withSuccessHandler(afterDropDownArrayReturned2).getDropdownArray2();
+  
+  }
+  function addUniqueOptionsToDropdownList2(el,arrayOfArrays2,index){
+    var currentlyAdded = [];
+    el.innerHTML = '<option></option>';
+    arrayOfArrays2.forEach(function(r){
+      if(currentlyAdded.indexOf(r[index]) === -1){
+        var option = document.createElement("option");
+        option.textContent = r[index];
+        el.appendChild(option);
+        currentlyAdded.push(r[index]);
+        }
+  
+  });
+  
+  }
+ 
+  function afterDropDownArrayReturned2(arrayOfArrays2){
+  arrayOfValues2 = arrayOfArrays2.filter(function(r){return true;});
+  var zona = document.getElementById("zona");
+  addUniqueOptionsToDropdownList2(zona,arrayOfValues2,0);
+  afterFirstDropDownChanged1()
+  afterSecondDropDownChanged2();
+
+  } 
+  function afterFirstDropDownChanged1(){
+    var region = document.getElementById("region");
+    var zona = document.getElementById("zona").value;
+    var filteredArrayOfValues2 = arrayOfValues2.filter(function(r){return r[0] === zona});
+    addUniqueOptionsToDropdownList2(region,filteredArrayOfValues2,1)
+    
+  }
+  function afterSecondDropDownChanged2(){
+    var centro = document.getElementById("centro");
+    var region = document.getElementById("region").value;
+    var zona = document.getElementById("zona").value;
+    var filteredArrayOfValues2 = arrayOfValues2.filter(function(r){return r[0] === zona && r[1] === region});
+    addUniqueOptionsToDropdownList2(centro,filteredArrayOfValues2,2)
+    
+  }
+
+    document.getElementById("app").addEventListener("input",inputEventHandler);
+    document.getElementById("app").addEventListener("click",clickEventHandler);
+    document.getElementById("navigation").addEventListener("click",navClickEventHandler);
+    document.addEventListener("DOMContentLoaded", loadSearchView);
+  
+  </script>
+ 
+  </body>
+</html>
