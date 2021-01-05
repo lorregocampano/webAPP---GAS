@@ -1,0 +1,821 @@
+<html lang="en">
+ <head>
+  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+ </head>
+  
+<br>
+ <style>
+     
+  .tdmain {
+  font-weight: bold;
+  }
+
+  
+  th, td,tr {
+  padding: 15px;
+  text-align: left;
+}
+  
+  th {
+  color: white;
+  background-color: #001b70
+  
+    }
+  </style>
+   
+   <div id="sgcs">
+   
+   <div class="container">
+    <h5>Cambiar estado Contrato</h5> 
+    
+<table class="table">
+  <thead>
+    <tr>
+      <th colspan="2" >1. IDENTIFICACIÓN DEL CONTRATO</th>
+      
+     
+      
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+      
+      <td class="tdmain">1.0 ID de contrato</td>
+      <td colspan="2">
+      
+       <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-id-card"></i></span>
+  </div>
+  <input type="text" id="contractId" class="form-control" aria-label="cuenta" aria-describedby="addon-wrapping" readonly>
+   
+</div>
+        <small id="usuarioHelp" class="form-text text-muted">ID del contrato - no modificable</small>    
+      </td>
+     
+    </tr> 
+  
+  
+  
+    <tr>
+      
+      <td class="tdmain">1.1 Usuario</td>
+      <td colspan="2">
+      
+       <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-id-card"></i></span>
+  </div>
+  <input type="text" id="cuenta" class="form-control" aria-label="cuenta" aria-describedby="addon-wrapping" value = "<?= usuario; ?>" readonly>
+   
+</div>
+        <small id="usuarioHelp" class="form-text text-muted">Usted se ha identificado con esta cuenta de correo.</small>    
+      </td>
+     
+    </tr> 
+    <tr>
+    <td class="tdmain">1.2 Ámbito del Contrato</td>
+      <td> 
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+ 
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-crosshairs"></i></span>
+  </div>
+   
+  <select class="form-control" id="ambito" value=" " required >
+  <option disabled selected>Seleccione ámbito</option>
+      <option>INMOBILIARIO</option>
+      <option>SERVICIOS</option>
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+     
+      </td>
+      </tr>
+      
+       <tr>
+      
+      <td class="tdmain">1.3 Materia del Contrato</td>
+      <td><div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-book"></i></span>
+  </div>
+  
+  <select class="form-control" id="materia" required>
+
+ <option value="" disabled selected>Seleccione materia</option>
+   <? for(var i=0;i<listamateria.length;i++ ) { ?>
+   <option> <?= listamateria[i]; ?></option>
+   <? } ?>
+   
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+    <tr>
+      
+      <td class="tdmain">1.4 Descripción del Contrato</td>
+      <td> 
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-info"></i></span>
+  </div>
+  <textarea id="descripcion" class="form-control" aria-label="descripcion" aria-describedby="addon-wrapping" rows="10" minlength="10" maxlength=1000></textarea></div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+          
+      </td>
+      
+    </tr>
+     <tr>
+      
+      <td class="tdmain">1.5 Tipo de proceso de contratación</td>
+      <td>
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-shopping-cart"></i></span>
+  </div>
+  
+  <select class="form-control" id="tipoproceso" required>
+      <option selected disabled>Seleccione opción</option>
+      <option>LICITACIÓN</option>
+      <option>TRATO DIRECTO</option>
+      <option>CONVENIO MARCO</option>
+      
+     
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+    
+    <tr>
+      
+      <td class="tdmain">1.6 Tipo de estado de proceso</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-fast-forward"></i></span>
+  </div>
+  
+  <select class="form-control" id="estado" >
+      
+      <option selected>Seleccione tipo estado proceso</option>
+      <option>RENOVACIÓN</option>
+      <option>MODIFICACIÓN</option>
+      <option>TÉRMINO</option>
+      <option>PRORROGA</option>
+      <option>COMPLEMENTO</option>
+      
+     
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+    
+     <tr>
+      
+      <td class="tdmain">1.7 Zona de ejecución del contrato</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-map-marker"></i></span>
+  </div>
+  
+  <select class="form-control" id="zona" required>
+  
+  <option>NIVEL CENTRAL</option>
+  <option>RED DE TESORERÍAS</option>
+  
+  
+  
+  </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+     <tr>
+      
+      <td class="tdmain">1.8 Región de ejecución del  contrato</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-street-view"></i></span>
+  </div>
+  
+  <select class="form-control" id="region" required >
+<option value="" disabled selected>Seleccione región</option>
+   <? for(var i=0;i<listaregion.length;i++ ) { ?>
+   <option> <?= listaregion[i]; ?></option>
+   <? } ?>
+    
+      
+     
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+    
+    <tr>
+      
+      <td class="tdmain">1.9 Dirección de Ejecución</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-sitemap"></i></span>
+  </div>
+  
+  <select class="form-control" id="centro" required>
+<option value="" disabled selected>Seleccione dirección</option>
+   <? for(var i=0;i<listadirec.length;i++ ) { ?>
+   <option> <?= listadirec[i]; ?></option>
+   <? } ?>
+      
+     
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      </td>
+      
+    </tr>
+    <tr>
+    
+     
+      <td class="tdmain">1.10 Centro de Responsabilidad (Administrador del contrato)</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-sitemap"></i></span>
+  </div>
+  
+  <select class="form-control" id="administrador" aria-label="administrador" required>
+       
+           <option value="" disabled selected>Seleccione administrador</option>
+   <? for(var i=0;i<listacentro.length;i++ ) { ?>
+   <option> <?= listacentro[i]; ?></option>
+   <? } ?>
+             
+     
+      </select>
+ </div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+    
+    </tr>
+    <tr>
+      
+      <td class="tdmain">1.11 Beneficiarios del Contrato</td>
+      <td>
+      
+       <button id="benbutton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+  Agregar Beneficiarios
+</button>
+      
+       </td>
+     
+    </tr>
+    
+    
+   
+  </tbody>
+</table>
+
+<!-- tabla 2 -->
+
+<table class="table">
+  <thead>
+    <tr>
+      <th colspan="2" >2. FORMALIZACIÓN DEL CONTRATO</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      
+      <td class="tdmain">2.1 Fecha de inicio</td>
+      <td colspan="2">
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-calendar"></i></span>
+  </div>
+  <input type="date" id="fechainicio" class="form-control" aria-label="fechainicio" aria-describedby="addon-wrapping" min="01-01-2000" required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      
+      
+      </td>
+     
+    </tr>
+       
+    
+    <tr>
+      
+      <td class="tdmain">2.2 Fecha de término</td>
+      <td>
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-calendar"></i></span>
+  </div>
+  <input type="date" id="fechatermino" class="form-control" aria-label="fechatermino" aria-describedby="addon-wrapping" required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      <small id="FECHAHelp" class="form-text text-muted">La fecha de termino de contrato debe ser mayor que la fecha inicial de contrato</small>  
+      
+      
+      </td>
+      
+    </tr>
+    <tr>
+      
+      <td class="tdmain">2.3 Número de Resolución</td>
+      <td> 
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sort-numeric-up-alt" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M4 14a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-1 0v11a.5.5 0 0 0 .5.5z"/>
+  <path fill-rule="evenodd" d="M6.354 4.854a.5.5 0 0 0 0-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L4 3.207l1.646 1.647a.5.5 0 0 0 .708 0z"/>
+  <path d="M9.598 5.82c.054.621.625 1.278 1.761 1.278 1.422 0 2.145-.98 2.145-2.848 0-2.05-.973-2.688-2.063-2.688-1.125 0-1.972.688-1.972 1.836 0 1.145.808 1.758 1.719 1.758.69 0 1.113-.351 1.261-.742h.059c.031 1.027-.309 1.856-1.133 1.856-.43 0-.715-.227-.773-.45H9.598zm2.757-2.43c0 .637-.43.973-.933.973-.516 0-.934-.34-.934-.98 0-.625.407-1 .926-1 .543 0 .941.375.941 1.008zM12.438 14V8.668H11.39l-1.262.906v.969l1.21-.86h.052V14h1.046z"/>
+</svg></span>
+  </div>
+  <input type="text" id="numres" class="form-control" aria-label="numres" aria-describedby="addon-wrapping" pattern=""required>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+     <small id="numresHelp" class="form-text text-muted">Ejemplo de formato de n° de resolución: </small>   
+      
+      
+      </td>
+      
+    </tr>
+    <tr>
+      
+      <td class="tdmain">2.4 Fecha de Resolución</td>
+      <td>
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-calendar"></i></span>
+  </div>
+  <input type="date" id="fechares" class="form-control validate" aria-label="fechares" aria-describedby="addon-wrapping" min="01-01-2020"  required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      </td>
+      
+    </tr>
+      <tr>
+      
+      <td class="tdmain">2.5 Carga de archivo de Resolución</td>
+     <td> 
+     
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-cloud-upload"></i></span>
+  </div>
+  <button id="uploadbutton1" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal3">Cargar archivo de Resolución</button>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+ 
+       
+</td>
+      
+    </tr>
+     <tr>
+      
+      <td class="tdmain">2.6 Carga de archivo de Contrato</td>
+       <td> 
+       
+       <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-cloud-upload"></i></span>
+  </div>
+  <button id="uploadbutton2" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal4">
+  Cargar Archivo de Contrato - Opcional
+</button>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+  </td>
+      
+    </tr>
+    
+    <tr>
+      
+      <td class="tdmain">2.7 Estado del Contrato</td>
+      <td>
+      
+        <select class="form-control" id="status" aria-label="status" aria-describedby="addon-wrapping" required>
+       
+        <option selected>VIGENTE</option>
+        <option >NO VIGENTE</option>
+ 
+      
+              </select>
+ 
+      </td>
+      
+    </tr>
+    <tr>
+      
+      <td class="tdmain">2.8 Número de Expediente</td>
+      <td>
+      
+       <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-folder-open"></i></span>
+  </div>
+  <input type="text" id="numexp" class="form-control" aria-label="numexp" aria-describedby="addon-wrapping" pattern="" required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+   <small id="expHelp" class="form-text text-muted">Ejemplo de formato de n° de exp: </small>
+      </td>
+      
+    </tr>
+    
+    
+   
+   
+  </tbody>
+</table>
+
+ <!-- tabla 3 -->
+
+<table class="table">
+  <thead>
+    <tr>
+      <th colspan="2" >3. EJECUCIÓN DEL CONTRATO</th>
+    
+      
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      
+      <td class="tdmain">3.1 Empresa, Institución o Persona Natural</td>
+      <td colspan="2">
+      
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-building"></i> <i class="fa fa-user"></i></span>
+  </div>
+  <input type="text" id="empresa" class="form-control" aria-label="empresa" aria-describedby="addon-wrapping" required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      
+      </td>
+     
+    </tr>
+    <tr>
+      
+      <td class="tdmain">3.2 Rol Único Tributario</td>
+      <td>     <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping"><i class="fa fa-id-card"></i></span>
+  </div>
+  <input type="text" id="rut" class="form-control validate" aria-label="rut" aria-describedby="addon-wrapping" oninput="checkRut(this)" required>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      </td>
+      
+    </tr>
+   
+    <tr>
+      
+      <td class="tdmain">3.3 Moneda</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping">$$$</span>
+  </div>
+  <select class="form-control" id="moneda" required>
+   <option value="" disabled selected>Seleccione tipo moneda</option>
+   <? for(var i=0;i<listamoneda.length;i++ ) { ?>
+   <option> <?= listamoneda[i]; ?></option>
+   <? } ?>
+   </select>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      
+     </td>
+      
+    </tr>
+      <tr>
+      
+      <td class="tdmain">3.4 Monto anual en UF</td>
+      <td>
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping">UF</span>
+  </div>
+  <input type="number" id="montouf" class="form-control" aria-label="montouf" aria-describedby="addon-wrapping" min="1" max = "1000000" step=".01" required >
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      
+      
+      
+      </td>
+      
+    </tr>
+     <tr>
+      
+      <td class="tdmain">3.5 Monto anual en pesos</td>
+      <td>
+      
+      <div class="input-group flex-nowrap">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="addon-wrapping">CL$</span>
+  </div>
+  <input type="number" id="montopeso" class="form-control" aria-label="montopeso" aria-describedby="addon-wrapping" min="1" max = "10000000000" step=".01" required>
+</div>
+      <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+      
+      
+      
+      
+      </td>
+      
+    </tr>
+   
+  </tbody>
+</table>
+
+   <div id="notifications">
+   
+    <div id="errornotification" class="toast" style="position: absolute; bottom: -50; right: 0;" role="alert" aria-live="assertive" aria-atomic="true" data-delay="7000">
+  <div class="toast-header">
+    <strong class="mr-auto">Error</strong>
+    <small>Notificación</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    Uno o más campos requeridos no han sido completados dentro del formulario o en su defecto no son válidos
+  </div>
+</div>
+  
+  <div id="errornotificationfecha" class="toast" style="position: absolute; bottom: -50; right: 0;" role="alert" aria-live="assertive" aria-atomic="true" data-delay="7000">
+  <div class="toast-header">
+    <strong class="mr-auto">Error</strong>
+    <small>Fecha Errónea</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    La fecha de inicio del contrato es superior a la fecha de termino de éste.
+  </div>
+</div>
+  
+   <div id="successnotification"  class="toast" style="position: absolute; bottom: -50; right: 0;" role="alert" aria-live="assertive" aria-atomic="true" data-delay="7000">
+  <div class="toast-header">
+    <strong class="mr-auto">Datos correctos</strong>
+    <small>Notificación</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    El formulario ha sido enviado de forma correcta. Recibirá un correo con el número de la operación ID y los datos generales del contrato.
+  </div>
+</div>
+    
+  </div>
+
+ 
+  <!-- <input type="text" class="form-control" id="issueInputsValue3" > -->
+  
+
+    <br>  
+    
+    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal">Guardar cambios</button>
+    <button class="btn btn-primary" id="cancel-changes" type="button" >Cancelar</button>
+    <div class="alert alert-success invisible" id="save-success" role="alert">
+    Cambios guardados con éxito.
+</div>
+
+
+<div id="modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cambio de estado de Contrato</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Desea hacer los cambios?</p>
+      </div>
+      <div class="modal-footer">
+       <button class="btn btn-primary " id ="guardarcambio" type="button" data-toggle="modal" data-target="#modal">Guardar cambios</button>
+       <button class="btn btn-primary" id ="cancelar" type="button" data-toggle="modal" data-target="#modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+   </div>
+
+ </div>
+ 
+ 
+ 
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Ingreso de Beneficiarios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+       <div>
+       <select class="form-control" id="addpartnertoggle" onchange="benefload()">
+       <option selected>Seleccione una opción</option>
+       <option>Agregar</option>
+       <option>No agregar</option>
+       </select>
+       </div>
+       <br>
+       
+       
+       <div id="issues">
+       
+       </div>
+       <br>
+       
+       <template id="inputTemplate">
+       
+        <div class="input-group input-line mb-2">
+        <div class="input-group-prepend mr-0">
+        <span class="input-group-text ">Beneficiario</span>
+        </div>
+        
+       <select class="form-control issue-input3" id="beneficiario" aria-label="beneficiario" aria-describedby="addon-wrapping" required>
+       
+        <option value="" disabled selected>Seleccione beneficiario</option>
+   <? for(var i=0;i<listabenef.length;i++ ) { ?>
+   <option> <?= listabenef[i]; ?></option>
+   <? } ?>
+      
+              </select>
+      
+              
+           
+        <div class="input-group-append">
+        <button class="btn btn-outline-secondary add-input" type="button"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-outline-secondary remove-input" type="button"><i class="fa fa-minus"></i></button>
+         <div class="invalid-feedback">
+        No ha ingresado los datos o estos no son válidos.
+      </div>
+        </div>
+        </div>
+        
+        
+      </template>
+          
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+ 
+  <!-- Modal 3 -->
+
+<div id="modal3" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Carga Archivo de Resolución</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        
+        <div>
+        <p> Ingrese el archivo en el siguiente apartado:</p>
+        
+        <input type="file" name="upload" id="files" onchange ="successnotification3()" required>
+        
+         <div class="alert alert-success invisible" id="save-success1" role="alert">
+    Archivo Cargado
+</div>
+      
+  
+</div>
+ 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        
+        
+      
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <!-- Modal 4 -->
+
+<div id="modal4" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Carga archivo Contrato - Opcional</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+      <p> Ingrese el archivo en el siguiente apartado:</p>
+        
+        <input type="file" name="upload" id="files2" onchange ="successnotification2()" >  
+          <div class="alert alert-success invisible" id="save-success2" role="alert">
+    Archivo Cargado
+</div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+ 
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
